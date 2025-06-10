@@ -71,7 +71,7 @@ optional = true
 mkdocs = "^1.5.3"
 mkdocstrings = { extras = ["python"], version = ">=0.24,<0.27" }
 mkdocs-material = "^9.5.11"
-mkdocs-print-site-plugin = "^2.3.6"
+mkdocs-print-site-plugin = "^2.7.3"
 mkdocs-exporter = ">=5.3,<7.0"
 
 [project.optional-dependencies]
