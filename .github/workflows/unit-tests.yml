@@ -1,0 +1,31 @@
+---
+name: Unit Tests
+
+on:
+  workflow_dispatch:
+  merge_group:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+concurrency:
+  group: 'unit-tests-${{ github.ref }}'
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    uses: worgarside/github-config-files/.github/workflows/__unit-tests.yml@0.3.3
+    with:
+      python-version: '3.12'
+      source-dir: 'wg_utilities'
+    secrets: inherit
