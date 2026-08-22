@@ -22,5 +22,5 @@ jobs:
         github.event_name == 'pull_request' &&
         github.event.label.name == 'bot:keep-updated'
       )
-    uses: worgarside/github-config-files/.github/workflows/__pr_autoupdate.yml@main
+    uses: worganisation/github-config-files/.github/workflows/__pr_autoupdate.yml@main
     secrets: inherit

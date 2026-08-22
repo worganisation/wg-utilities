@@ -9,7 +9,7 @@ on:
 jobs:
   pr-cleanup:
     name: PR Cleanup
-    uses: worgarside/github-config-files/.github/workflows/__pr_cleanup.yml@main
+    uses: worganisation/github-config-files/.github/workflows/__pr_cleanup.yml@main
     permissions:
       contents: write
       pull-requests: write
