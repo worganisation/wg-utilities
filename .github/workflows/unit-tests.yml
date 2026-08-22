@@ -24,7 +24,7 @@ permissions:
 jobs:
   unit-tests:
     name: Unit Tests
-    uses: worgarside/github-config-files/.github/workflows/__unit-tests.yml@0.5.4
+    uses: worgarside/github-config-files/.github/workflows/__unit-tests.yml@0.6.0
     with:
       python-version: '3.12'
       source-dir: 'wg_utilities'
