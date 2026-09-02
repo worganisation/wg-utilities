@@ -1,0 +1,32 @@
+---
+name: Unit Tests
+
+on:
+  workflow_dispatch:
+  merge_group:
+  push:
+    branches:
+      - main
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+concurrency:
+  group: 'unit-tests-${{ github.ref }}'
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  unit-tests:
+    name: Unit Tests
+    uses: worganisation/github-config-files/.github/workflows/__unit-tests.yml@0.8.7
+    with:
+      python-version: '3.12'
+      source-dir: 'wg_utilities'
+    secrets: inherit
