@@ -15,7 +15,9 @@ concurrency:
 jobs:
   set-auto-merge:
     name: Set PR Auto Merge
-    if: ${{ !github.event.pull_request.draft }}
+    if: >-
+      !github.event.pull_request.draft &&
+      !startsWith(github.head_ref, 'renovate/')
     uses: worgarside/github-config-files/.github/workflows/__set_pr_auto_merge.yml@main
     with:
       head-ref: ${{ github.head_ref }}
