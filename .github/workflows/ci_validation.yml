@@ -1,22 +1,115 @@
 ---
-name: 'CI: Validation'
+name: CI
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
   pull_request:
-    types:
-      - opened
-      - reopened
-      - synchronize
+    types: [opened, reopened, synchronize, ready_for_review, edited, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  ci-validation:
-    name: 'CI: Validation'
-    uses: worgarside/github-config-files/.github/workflows/__ci_validation.yml@main
-    with:
-      build-branch: '${{ github.ref }}'
-      build-type: 'python'
-      node-build-directory: ''
-      python-version: '3.12'
-      unit-test: 'true'
-    secrets: inherit
+  hooks:
+    name: Pre-commit hooks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: |
+            3.11
+            3.12
+      - uses: j178/prek-action@4e14d07f9231acabce116ccfca13b13dd9755ece # v3.0.0
+        with:
+          prek-version: 0.4.12
+          cache: false
+          extra-args: --all-files
+
+  actionlint:
+    name: Lint workflows
+    uses: worganisation/github-config-files/.github/workflows/__actionlint.yml@main
+
+  semver:
+    name: Validate release label
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Validate release classification
+        env:
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          python - <<'PYCODE'
+          import json, os
+          labels = set(json.loads(os.environ['LABELS']))
+          kinds = labels & {'major', 'minor', 'patch', 'dependencies', 'non-functional'}
+          if not kinds:
+              raise SystemExit('Add a release classification label')
+          if len(labels & {'major', 'minor', 'patch'}) > 1:
+              raise SystemExit('Select only one SemVer bump')
+          PYCODE
+
+  sonar:
+    name: Sonar quality gate
+    needs: tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      # yamllint disable-line rule:line-length
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: coverage
+      # yamllint disable-line rule:line-length
+      - uses: SonarSource/sonarqube-scan-action@ba9859eae8dd6bd29e412f25ddbbef3d032000f4 # v8.2.2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >-
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.qualitygate.wait=true
+
+  tests:
+    name: Unit tests (${{ matrix.python }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.11', '3.12']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install dependencies
+        run: |
+          pip install poetry==2.1.1
+          poetry install --all-extras --with test
+      - name: Run tests
+        run: poetry run pytest --cov=wg_utilities --cov-report=xml -n 2
+      - name: Build package
+        run: poetry build
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        if: matrix.python == '3.12'
+        with:
+          name: coverage
+          path: coverage.xml
+      - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+        if: matrix.python == '3.12'
+        with:
+          files: coverage.xml
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
