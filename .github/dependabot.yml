@@ -2,14 +2,15 @@
 version: 2
 updates:
   - package-ecosystem: pip
+    open-pull-requests-limit: 0
     directory: /
     schedule:
       interval: daily
-    open-pull-requests-limit: 20
     reviewers:
       - worgarside
 
   - package-ecosystem: github-actions
+    open-pull-requests-limit: 0
     directory: /
     schedule:
       interval: daily
@@ -17,6 +18,7 @@ updates:
       - worgarside
 
   - package-ecosystem: npm
+    open-pull-requests-limit: 0
     directory: /
     schedule:
       interval: daily
