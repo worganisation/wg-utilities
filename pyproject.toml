@@ -232,3 +232,25 @@ docstring-code-line-length = "dynamic"
 min_confidence = 70
 paths = ["tests", "wg_utilities"]
 sort_by_size = true
+
+[tool.semantic_release]
+tag_format = "{version}"
+version_toml = ["pyproject.toml:project.version"]
+version_variables = ["wg_utilities/__init__.py:__version__"]
+commit_message = "chore(release): {version}"
+build_command = ""
+major_on_zero = false
+allow_zero_version = true
+
+[tool.semantic_release.branches.main]
+match = "main"
+prerelease = false
+
+[tool.semantic_release.remote]
+ignore_token_for_push = true
+
+[tool.semantic_release.commit_parser_options]
+allowed_tags = ["build", "chore", "ci", "deps", "docs", "feat", "fix", "hotfix", "perf", "refactor", "style", "test"]
+minor_tags = ["feat"]
+patch_tags = ["build", "deps", "fix", "hotfix", "perf"]
+parse_squash_commits = false

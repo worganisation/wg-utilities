@@ -1,0 +1,51 @@
+---
+name: Publish release artifacts
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: publish-release
+  cancel-in-progress: false
+
+jobs:
+  build:
+    if: "!github.event.release.prerelease"
+    # yamllint disable-line rule:line-length
+    uses: worganisation/github-config-files/.github/workflows/__build.yml@0.8.7
+    with:
+      build-branch: ${{ github.event.release.tag_name }}
+      build-type: python
+      environment: production
+      python-version: '3.12'
+      release-tag: ${{ github.event.release.tag_name }}
+    secrets: inherit
+
+  publish:
+    needs: build
+    # yamllint disable-line rule:line-length
+    uses: worganisation/github-config-files/.github/workflows/__deploy.yml@0.8.7
+    with:
+      deploy-to: pypi
+      environment: production
+      release-tag: ${{ github.event.release.tag_name }}
+    secrets: inherit
+
+  build-docs:
+    needs: publish
+    # yamllint disable-line rule:line-length
+    uses: worganisation/github-config-files/.github/workflows/__build-documentation.yml@0.8.7
+    secrets: inherit
+
+  deploy-docs:
+    needs: build-docs
+    # yamllint disable-line rule:line-length
+    uses: worganisation/github-config-files/.github/workflows/__deploy-documentation.yml@0.8.7
+    secrets: inherit
