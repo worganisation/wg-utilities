@@ -1,0 +1,30 @@
+---
+name: Validate release label
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review, labeled, unlabeled]
+
+permissions:
+  contents: read
+
+jobs:
+  semver:
+    name: Validate release label
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Validate release classification
+        env:
+          LABELS: ${{ toJSON(github.event.pull_request.labels.*.name) }}
+        run: |
+          python - <<'PYCODE'
+          import json, os
+          labels = set(json.loads(os.environ['LABELS']))
+          kinds = labels & {'major', 'minor', 'patch', 'dependencies', 'non-functional'}
+          if not kinds:
+              raise SystemExit('Add a release classification label')
+          if len(labels & {'major', 'minor', 'patch'}) > 1:
+              raise SystemExit('Select only one SemVer bump')
+          PYCODE
