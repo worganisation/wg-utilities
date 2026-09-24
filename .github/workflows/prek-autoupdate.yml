@@ -9,5 +9,6 @@ on:
 jobs:
   prek-autoupdate:
     name: Update Prek Hooks
-    uses: worganisation/github-config-files/.github/workflows/__prek-autoupdate.yml@0.8.7
+    # yamllint disable-line rule:line-length
+    uses: worganisation/github-config-files/.github/workflows/__prek-autoupdate.yml@0.9.0
     secrets: inherit

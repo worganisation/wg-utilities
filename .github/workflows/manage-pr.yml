@@ -1,44 +1,34 @@
 ---
-name: Manage PR
+name: Standard PR Checks
 
 on:
   pull_request:
     types:
-      - labeled
-      - unlabeled
       - opened
       - reopened
       - synchronize
       - ready_for_review
-      - auto_merge_enabled
-      - auto_merge_disabled
+      - edited
+      - labeled
+      - unlabeled
 
+# Do not cancel code-event work when housekeeping changes a label or title.
 concurrency:
-  # yamllint disable-line rule:line-length
-  group: manage-pr-${{ github.event.pull_request.number }}-${{ github.event.action }}
+  group: pr-metadata-${{ github.event.pull_request.number }}-${{ github.event.action }}
   cancel-in-progress: true
 
 jobs:
-  manage-pr-labels:
-    name: Manage PR Labels
-    uses: worganisation/github-config-files/.github/workflows/__manage-pr-labels.yml@0.8.7
+  metadata:
+    name: Standard PR Checks
+    # yamllint disable-line rule:line-length
+    uses: worganisation/github-config-files/.github/workflows/__standard-pr-checks.yml@0.9.0
     permissions:
       contents: read
       pull-requests: write
     with:
-      head-ref: ${{ github.head_ref }}
-      pr-author: ${{ github.event.pull_request.user.login }}
-      pr-number: ${{ github.event.pull_request.number }}
-    secrets: inherit
-
-  close-empty-pr:
-    name: Close Empty PR
-    uses: worganisation/github-config-files/.github/workflows/__close-empty-pr.yml@0.8.7
-    if: github.event.pull_request.state == 'open'
-    permissions:
-      contents: read
-      pull-requests: write
-    with:
-      head-ref: ${{ github.head_ref }}
-      pr-number: ${{ github.event.pull_request.number }}
+      validate-title: ${{ vars.CI_DISABLE_PR_TITLE != 'true' }}
+      manage-labels: ${{ vars.CI_DISABLE_PR_LABELS != 'true' }}
+      close-empty: ${{ vars.CI_DISABLE_CLOSE_EMPTY_PR != 'true' }}
+      # Organisation repositories always require a deliberate merge.
+      auto-merge: ${{ github.repository_owner != 'worganisation' && vars.CI_DISABLE_AUTO_MERGE != 'true' }}
     secrets: inherit

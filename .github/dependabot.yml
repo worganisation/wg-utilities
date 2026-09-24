@@ -2,10 +2,10 @@
 version: 2
 updates:
   - package-ecosystem: uv
+    open-pull-requests-limit: 0
     directory: /
     schedule:
       interval: monthly
-    open-pull-requests-limit: 20
     groups:
       uv-dependencies:
         applies-to: version-updates
@@ -19,6 +19,7 @@ updates:
       - worgarside
 
   - package-ecosystem: github-actions
+    open-pull-requests-limit: 0
     directory: /
     schedule:
       interval: monthly
@@ -26,6 +27,7 @@ updates:
       - worgarside
 
   - package-ecosystem: npm
+    open-pull-requests-limit: 0
     directory: /
     schedule:
       interval: monthly
