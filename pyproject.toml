@@ -43,7 +43,7 @@ paho-mqtt = { version = "^2.1.0", optional = true }
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-mypy-boto3-lambda = "^1.28.36"
+mypy-boto3-lambda = "^1.38.0"
 mypy-boto3-s3 = "^1.28.55"
 
 [tool.poetry.group.test]
