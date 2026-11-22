@@ -1,0 +1,34 @@
+---
+name: Standard PR Checks
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
+      - edited
+      - labeled
+      - unlabeled
+
+# Do not cancel code-event work when housekeeping changes a label or title.
+concurrency:
+  group: pr-metadata-${{ github.event.pull_request.number }}-${{ github.event.action }}
+  cancel-in-progress: true
+
+jobs:
+  metadata:
+    name: Standard PR Checks
+    # yamllint disable-line rule:line-length
+    uses: worganisation/github-config-files/.github/workflows/__standard-pr-checks.yml@0.11.1
+    permissions:
+      contents: read
+      pull-requests: write
+    with:
+      validate-title: ${{ vars.CI_DISABLE_PR_TITLE != 'true' }}
+      manage-labels: ${{ vars.CI_DISABLE_PR_LABELS != 'true' }}
+      close-empty: ${{ vars.CI_DISABLE_CLOSE_EMPTY_PR != 'true' }}
+      # Organisation repositories always require a deliberate merge.
+      auto-merge: ${{ github.repository_owner != 'worganisation' && vars.CI_DISABLE_AUTO_MERGE != 'true' }}
+    secrets: inherit

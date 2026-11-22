@@ -5,7 +5,16 @@ updates:
     open-pull-requests-limit: 0
     directory: /
     schedule:
-      interval: daily
+      interval: monthly
+    groups:
+      pip-dependencies:
+        applies-to: version-updates
+        patterns:
+          - '*'
+      pip-security-dependencies:
+        applies-to: security-updates
+        patterns:
+          - '*'
     reviewers:
       - worgarside
 
@@ -13,7 +22,7 @@ updates:
     open-pull-requests-limit: 0
     directory: /
     schedule:
-      interval: daily
+      interval: monthly
     reviewers:
       - worgarside
 
@@ -21,6 +30,6 @@ updates:
     open-pull-requests-limit: 0
     directory: /
     schedule:
-      interval: daily
+      interval: monthly
     reviewers:
       - worgarside
