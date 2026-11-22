@@ -1,17 +1,17 @@
 ---
 version: 2
 updates:
-  - package-ecosystem: uv
+  - package-ecosystem: pip
     open-pull-requests-limit: 0
     directory: /
     schedule:
       interval: monthly
     groups:
-      uv-dependencies:
+      pip-dependencies:
         applies-to: version-updates
         patterns:
           - '*'
-      uv-security-dependencies:
+      pip-security-dependencies:
         applies-to: security-updates
         patterns:
           - '*'
