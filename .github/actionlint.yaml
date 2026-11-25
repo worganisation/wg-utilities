@@ -4,3 +4,8 @@ self-hosted-runner:
     - cc
     - iac
     - opentofu
+
+paths:
+  .github/workflows/__release-notifications.yml:
+    ignore:
+      - 'unexpected key "queue" for "concurrency" section'
