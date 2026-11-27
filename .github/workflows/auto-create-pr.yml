@@ -10,12 +10,84 @@ on:
   workflow_dispatch:
 
 jobs:
+  resolve_base:
+    name: Resolve PR base
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      base_ref_name: ${{ steps.base.outputs.base_ref_name }}
+    steps:
+      - name: Check out full history
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Select nearest open ancestor PR
+        id: base
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          HEAD_REF: ${{ github.ref_name }}
+          HEAD_SHA: ${{ github.sha }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          # The reusable workflow interpolates both refs into shell commands.
+          safe_ref='^[a-zA-Z0-9_][a-zA-Z0-9_./#-]*$'
+          if [[ ! $HEAD_REF =~ $safe_ref || ! $DEFAULT_BRANCH =~ $safe_ref ]]; then
+            echo "::error::Unsupported head or default branch name"
+            exit 1
+          fi
+
+          pulls=$(gh api --paginate \
+            "repos/${REPOSITORY}/pulls?state=open&per_page=100" \
+            --jq '.[] | [.head.ref, .head.sha, .head.repo.full_name, .base.ref] | @tsv')
+
+          base_ref=$DEFAULT_BRANCH
+          nearest_distance=
+          while IFS=$'\t' read -r pr_head_ref pr_head_sha pr_repository pr_base_ref; do
+            [[ -n "$pr_head_sha" && "$pr_repository" == "$REPOSITORY" ]] || continue
+
+            # An existing PR keeps its base even if a different ancestor is closer.
+            if [[ "$pr_head_ref" == "$HEAD_REF" ]]; then
+              if [[ ! $pr_base_ref =~ $safe_ref ]]; then
+                echo "::error::Unsupported existing PR base branch name"
+                exit 1
+              fi
+
+              base_ref=$pr_base_ref
+              break
+            fi
+
+            [[ $pr_head_ref =~ $safe_ref ]] || continue
+
+            # Checkout fetched every branch, so same-repository PR heads are local.
+            if ! git cat-file -e "${pr_head_sha}^{commit}" 2>/dev/null; then
+              continue
+            fi
+            if ! git merge-base --is-ancestor "$pr_head_sha" "$HEAD_SHA"; then
+              continue
+            fi
+
+            distance=$(git rev-list --count "${pr_head_sha}..${HEAD_SHA}")
+            if [[ -z "$nearest_distance" || "$distance" -lt "$nearest_distance" ]]; then
+              nearest_distance=$distance
+              base_ref=$pr_head_ref
+            fi
+          done <<< "$pulls"
+
+          echo "base_ref_name=$base_ref" >> "$GITHUB_OUTPUT"
+          echo "Selected PR base: $base_ref"
+
   create-pr:
     name: Create PR
+    needs: resolve_base
     # yamllint disable-line rule:line-length
-    uses: worganisation/github-config-files/.github/workflows/__create-pull-request.yml@0.13.2
+    uses: worganisation/github-config-files/.github/workflows/__create-pull-request.yml@0.14.0
     with:
-      base-ref-name: ${{ github.event.repository.default_branch }}
+      base-ref-name: ${{ needs.resolve_base.outputs.base_ref_name }}
       head-ref-name: ${{ github.ref_name }}
       pr-draft: true
       update-pr-body-if-exists: true
