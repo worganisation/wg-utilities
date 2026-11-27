@@ -21,7 +21,7 @@ jobs:
   metadata:
     name: Standard PR Checks
     # yamllint disable-line rule:line-length
-    uses: worganisation/github-config-files/.github/workflows/__standard-pr-checks.yml@0.14.0
+    uses: worganisation/github-config-files/.github/workflows/__standard-pr-checks.yml@0.14.2
     permissions:
       contents: read
       pull-requests: write
