@@ -85,7 +85,7 @@ jobs:
     name: Create PR
     needs: resolve_base
     # yamllint disable-line rule:line-length
-    uses: worganisation/github-config-files/.github/workflows/__create-pull-request.yml@0.14.0
+    uses: worganisation/github-config-files/.github/workflows/__create-pull-request.yml@0.14.1
     with:
       base-ref-name: ${{ needs.resolve_base.outputs.base_ref_name }}
       head-ref-name: ${{ github.ref_name }}
