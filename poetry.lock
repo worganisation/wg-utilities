@@ -168,34 +168,22 @@ files = [
 ]
 
 [[package]]
-name = "async-timeout"
-version = "4.0.3"
-description = "Timeout context manager for asyncio programs"
-optional = true
-python-versions = ">=3.7"
-groups = ["main"]
-files = [
-    {file = "async-timeout-4.0.3.tar.gz", hash = "sha256:4640d96be84d82d02ed59ea2b7105a0f7b33abe8703703cd0ab0bf87c427522f"},
-    {file = "async_timeout-4.0.3-py3-none-any.whl", hash = "sha256:7405140ff1230c310e51dc27b3145b9092d659ce68ff733fb0cefe3ee42be028"},
-]
-
-[[package]]
 name = "async-upnp-client"
-version = "0.40.0"
+version = "0.49.0"
 description = "Async UPnP Client"
 optional = true
-python-versions = ">=3.8"
+python-versions = ">=3.11"
 groups = ["main"]
 files = [
-    {file = "async_upnp_client-0.40.0.tar.gz", hash = "sha256:179790fee5555dbcaa0523f26ae812bc46790ad36fa11ed295cda5be3d704f1f"},
+    {file = "async_upnp_client-0.49.0-py3-none-any.whl", hash = "sha256:c9be3bb327a73a7c096cde4164926d4c3b2c317205d11397d10136bf560e95d6"},
+    {file = "async_upnp_client-0.49.0.tar.gz", hash = "sha256:b2306b2277471f3d3544d688159aa98ee656306af7f203a9e48386e9a94bfbd0"},
 ]
 
 [package.dependencies]
 aiohttp = ">3.9.0,<4.0"
-async-timeout = ">=3.0,<5.0"
 defusedxml = ">=0.6.0"
-python-didl-lite = ">=1.4.0,<1.5.0"
-voluptuous = ">=0.12.1"
+python-didl-lite = ">=1.5.0,<1.6.0"
+voluptuous = ">=0.15.2"
 
 [[package]]
 name = "attrs"
@@ -2264,17 +2252,21 @@ six = ">=1.5"
 
 [[package]]
 name = "python-didl-lite"
-version = "1.4.0"
+version = "1.5.2"
 description = "DIDL-Lite (Digital Item Declaration Language) tools for Python"
 optional = true
-python-versions = ">=3.8"
+python-versions = ">=3.11"
 groups = ["main"]
 files = [
-    {file = "python-didl-lite-1.4.0.tar.gz", hash = "sha256:54585ad41bee6d34f00adbdaa3e00a56547c7b6930b6d4280b887437e6c6666e"},
+    {file = "python_didl_lite-1.5.2-py3-none-any.whl", hash = "sha256:ed93f40ee77461b2303a6414ecca090ff3adb1b7633265e8d53352bd57febb0a"},
+    {file = "python_didl_lite-1.5.2.tar.gz", hash = "sha256:1ec2b09309701745befca09b15427724d60e333c882e6504ab8b0d835e32524b"},
 ]
 
 [package.dependencies]
 defusedxml = ">=0.6.0"
+
+[package.extras]
+test = ["pytest (==9.1.1)"]
 
 [[package]]
 name = "pyyaml"
@@ -2651,14 +2643,14 @@ zstd = ["zstandard (>=0.18.0)"]
 
 [[package]]
 name = "voluptuous"
-version = "0.14.2"
+version = "0.16.0"
 description = "Python data validation library"
 optional = true
-python-versions = ">=3.8"
+python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "voluptuous-0.14.2-py3-none-any.whl", hash = "sha256:efc1dadc9ae32a30cc622602c1400a17b7bf8ee2770d64f70418144860739c3b"},
-    {file = "voluptuous-0.14.2.tar.gz", hash = "sha256:533e36175967a310f1b73170d091232bf881403e4ebe52a9b4ade8404d151f5d"},
+    {file = "voluptuous-0.16.0-py3-none-any.whl", hash = "sha256:ee342095263e1b5afbd4d418cb5adc92810eebfd07696bb033a261210df33db4"},
+    {file = "voluptuous-0.16.0.tar.gz", hash = "sha256:006535e22fed944aec17bef6e8725472476194743c87bd233e912eb463f8ff05"},
 ]
 
 [[package]]
