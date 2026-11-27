@@ -126,18 +126,18 @@ speedups = ["Brotli", "aiodns (>=3.2.0)", "brotlicffi"]
 
 [[package]]
 name = "aioresponses"
-version = "0.7.7"
+version = "0.7.9"
 description = "Mock out requests made by ClientSession from aiohttp package"
 optional = false
 python-versions = "*"
 groups = ["test"]
 files = [
-    {file = "aioresponses-0.7.7-py2.py3-none-any.whl", hash = "sha256:6975f31fe5e7f2113a41bd387221f31854f285ecbc05527272cd8ba4c50764a3"},
-    {file = "aioresponses-0.7.7.tar.gz", hash = "sha256:66292f1d5c94a3cb984f3336d806446042adb17347d3089f2d3962dd6e5ba55a"},
+    {file = "aioresponses-0.7.9-py2.py3-none-any.whl", hash = "sha256:94f9617f841c5bd7ee088ed783284f2cf4e6acc85d3933d92fc2fc7bd572a1b0"},
+    {file = "aioresponses-0.7.9.tar.gz", hash = "sha256:1dcfa28938fc006f046a98383a7c07ac180be7a492c1ed557f5cd7b0805357d3"},
 ]
 
 [package.dependencies]
-aiohttp = ">=3.3.0,<4.0.0"
+aiohttp = ">=3.8,<4.0"
 packaging = ">=22.0"
 
 [[package]]
